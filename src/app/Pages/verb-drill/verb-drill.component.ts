@@ -315,8 +315,8 @@ export class VerbDrillComponent implements OnInit {
         return this.randomFrom(['elle']);
       //return this.randomFrom(['elle', 'il', 'on']);
       case 'elles':
-        //return this.randomFrom(['elles']);
-        return this.randomFrom(['elles', 'ils']);
+        return this.randomFrom(['elles']);
+      // return this.randomFrom(['elles', 'ils']);
       case 'je':
         return this.getJeForm();
       default:
