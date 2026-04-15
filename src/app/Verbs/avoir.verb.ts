@@ -21,7 +21,6 @@ export const avoir: Verb = {
     },
     imparfait: {
       baseRuleHint: 'use stem av- + ais/ais/ait/ions/iez/aient',
-      irregularStemHint: "use stem 'av-'",
       isFullyIrregular: true,
       conjugations: {
         je: { value: 'avais', isIrregular: true },

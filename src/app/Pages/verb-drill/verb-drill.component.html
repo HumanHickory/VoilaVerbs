@@ -31,7 +31,7 @@
         </div>
 
         <div class="mt-2 text-muted small">
-          <span class="me-3"><strong>Tense:</strong> {{ getDisplayTense() }}</span>
+          <span class="me-3"><strong>Tense:</strong> {{ displayTense }}</span>
           <span class="me-3"><strong>Subject:</strong> {{ currentDisplayPronoun | titlecase}}</span>
           <span><strong>Negative Form:</strong>
             <span [ngClass]="{ 'text-danger': isCurrentlyNegative, 'text-muted': !isCurrentlyNegative }">
@@ -39,15 +39,26 @@
             </span>
           </span>
         </div>
+
       </div>
 
       <!-- Form -->
       <form (ngSubmit)="submit()" class="mb-3">
+
         <div class="input-group input-group-lg mb-3">
           <span class="input-group-text">{{ currentDisplayPronoun| titlecase }}</span>
-          <input name="answer" type="text" [(ngModel)]="userAnswer" placeholder="Type answer..." class="form-control"
-            autocomplete="off" />
+          <input #answerInput name="answer" type="text" [(ngModel)]="userAnswer" placeholder="Type answer..."
+            class="form-control" autocomplete="off" />
         </div>
+
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          @for (char of accentCharacters; track char) {
+          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="insertAccent(char)">
+            {{ char }}
+          </button>
+          }
+        </div>
+
 
         <div class="d-flex gap-2">
           <button type="submit" class="btn btn-primary px-4">

@@ -23,7 +23,6 @@ export const etre: Verb = {
 
     imparfait: {
       baseRuleHint: 'use stem ét- + ais/ais/ait/ions/iez/aient',
-      irregularStemHint: "use stem 'ét-'",
       isFullyIrregular: true,
       conjugations: {
         je: { value: 'étais', isIrregular: true },

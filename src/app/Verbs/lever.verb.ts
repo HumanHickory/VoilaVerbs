@@ -52,7 +52,7 @@ export const seLever: Verb = {
         elle: { value: "s'est levé", isIrregular: true },
         nous: { value: 'nous sommes levés', isIrregular: true },
         vous: { value: 'vous êtes levés', isIrregular: true },
-        elles: { value: 'se sont levés', isIrregular: true },
+        elles: { value: 'se sont levées', isIrregular: true },
       },
     },
 

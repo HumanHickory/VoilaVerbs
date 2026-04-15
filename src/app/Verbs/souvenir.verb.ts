@@ -10,7 +10,7 @@ export const seSouvenir: Verb = {
     present: {
       isFullyIrregular: true,
       baseRuleHint:
-        "reflexive pronoun + stem souv- + e/es/e/ons/ez/ent (double 'n' in ils/elles forms)",
+        "reflexive pronoun + stem souv- + e/es/e/enons/ez/ent (double 'n' in ils/elles forms)",
       conjugations: {
         je: { value: 'me souviens', isIrregular: true },
         tu: { value: 'te souviens', isIrregular: true },

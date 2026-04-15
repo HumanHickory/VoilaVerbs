@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, input, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,6 +11,7 @@ import type { Tense } from '../../Enums/tense.enum';
 import { TENSE_LABELS } from '../../Enums/tense.enum';
 import type { Pronoun } from '../../Enums/pronoun.enum';
 import { verbs } from '../../Verbs/VERBS.const';
+import { VerbDrillService } from '../../Services/verbDrill.service';
 
 type DrillTriple = {
   verb: Verb;
@@ -27,6 +28,7 @@ type DrillTriple = {
 })
 export class VerbDrillComponent implements OnInit {
   private readonly verbs: Verb[] = verbs; //add verbs in VERBS.const
+  @ViewChild('answerInput') answerInput!: ElementRef<HTMLInputElement>; //used to refocus on the input
 
   private validTriples: DrillTriple[] = [];
   private settings: VerbSettings;
@@ -48,10 +50,7 @@ export class VerbDrillComponent implements OnInit {
   showEnglish = true;
   errorMessage = '';
 
-  //TODO
-  //Set up accent buttons
-  //Update"why this is wrong"
-  //Set up passe compose to ignore gendered conjugations
+  //TO DEPLOY: ng deploy --base-href=/VoilaVerbs/
 
   accentCharacters = [
     'à',
@@ -76,6 +75,7 @@ export class VerbDrillComponent implements OnInit {
   constructor(
     private readonly router: Router,
     private readonly settingsSvc: SettingsService,
+    private readonly verbDrillService: VerbDrillService,
   ) {
     this.settings = this.settingsSvc.load();
   }
@@ -84,30 +84,131 @@ export class VerbDrillComponent implements OnInit {
     this.initializeDrill();
   }
 
-  get availableCount(): number {
-    return this.validTriples.length;
+  private initializeDrill(): void {
+    this.getSettings();
+    this.rebuildPool();
+    this.pickRandom();
+  }
+
+  private getSettings(): void {
+    this.settings = this.settingsSvc.load();
+    this.resetRoundState();
+  }
+
+  private resetRoundState(): void {
+    this.errorMessage = '';
+    this.userAnswer = '';
+    this.showAnswer = false;
+    this.showHints = this.settings.alwaysShowHints;
+    this.showEnglish = this.settings.showEnglish;
+    this.wrongAttempts = 0;
+  }
+
+  private rebuildPool(): void {
+    const pool: DrillTriple[] = [];
+
+    for (const verb of this.verbs) {
+      if (
+        !this.verbDrillService.matchesGroup(verb) ||
+        !this.verbDrillService.matchesReflexiveFilter(verb) ||
+        !this.verbDrillService.matchesAuxiliaryFilter(verb)
+      )
+        continue;
+
+      const availableTenses = Object.keys(verb.tenses) as Tense[];
+
+      for (const tense of availableTenses) {
+        if (!this.settings.tenses.includes(tense)) continue;
+
+        const tenseData = verb.tenses[tense];
+        if (!tenseData) continue;
+
+        const pronouns = Object.keys(tenseData.conjugations) as Pronoun[];
+
+        for (const pronoun of pronouns) {
+          if (!this.settings.subjects.includes(pronoun)) continue;
+
+          const conjugation = tenseData.conjugations[pronoun];
+          if (!conjugation?.value) continue;
+
+          if (!this.verbDrillService.matchesIrregularFilter(conjugation.isIrregular === true))
+            continue;
+
+          pool.push({ verb, tense, pronoun });
+        }
+      }
+    }
+
+    this.validTriples = pool;
   }
 
   submit(): void {
-    const expected = this.getExpectedAnswer();
+    const expected = this.expectedAnswer;
+    const tenseData = this.getCurrentTenseData();
 
+    let errMessage = 'Incorrect — try again.';
     if (!expected) {
       this.errorMessage = 'This conjugation is not available.';
       return;
     }
 
-    if (this.answersMatch(this.userAnswer, expected)) {
+    if (tenseData == null) return;
+
+    if (this.verbDrillService.answerMatches(this.userAnswer, expected)) {
       this.resetRoundState();
       this.pickRandom();
+      this.refocusOnInput();
+
       return;
+    }
+
+    //Create more helpful error messages if it's something small that's wrong
+    if (this.verbDrillService.answerMatchesWithNoAccent(this.userAnswer, expected))
+      errMessage = 'So Close! Missing Diacritics';
+    else if (
+      this.currentTense == 'passeCompose' &&
+      this.currentVerb.usesAvoirAuxiliaryInPasseCompose === false &&
+      (this.currentPronoun == 'elle' || this.currentPronoun == 'elles')
+    ) {
+      //if it's an etre 3rd person passe verb (which will have gender and plural agreement)
+      //then see if their answer matches a different version of that agreement, and give them a more helpful suggestion
+      const singularFeminine = tenseData.conjugations['elle']?.value ?? '';
+      const pluralFeminine = tenseData.conjugations['elles']?.value ?? '';
+
+      const singularMasculine = this.verbDrillService.toMasculinePasseCompose(
+        singularFeminine,
+        'il',
+      );
+
+      const pluralMasculine = this.verbDrillService.toMasculinePasseCompose(pluralFeminine, 'ils');
+
+      //might as well get all of them, even though we know it doesn't match one (the correct answer)
+      const simulatedAnswerSingleFem = this.createExpectedAnswer(singularFeminine);
+      const simulatedAnswerPluralFem = this.createExpectedAnswer(pluralFeminine);
+      const simulatedAnswerSingleMasc = this.createExpectedAnswer(singularMasculine);
+      const simulatedAnswerPluralMasc = this.createExpectedAnswer(pluralMasculine);
+
+      //if the answer matches any of the passe compose versions, then give them a more helpful suggestion
+      if (
+        this.verbDrillService.answersMatch(this.userAnswer, [
+          simulatedAnswerSingleFem,
+          simulatedAnswerPluralFem,
+          simulatedAnswerSingleMasc,
+          simulatedAnswerPluralMasc,
+        ])
+      )
+        errMessage = 'So Close! Check gender or plural agreement in passé composé.';
     }
 
     this.wrongAttempts++;
 
     if (this.wrongAttempts >= this.maxWrongAttempts) {
-      this.errorMessage = this.buildDetailedMismatchMessage(expected, this.userAnswer);
+      this.errorMessage = this.verbDrillService.buildDetailedMismatchMessage(
+        expected,
+        this.userAnswer,
+      );
     } else {
-      this.errorMessage = 'Incorrect — try again.';
+      this.errorMessage = errMessage;
     }
     if (this.settings.resetAnswersOnMismatch) this.userAnswer = '';
   }
@@ -149,124 +250,7 @@ export class VerbDrillComponent implements OnInit {
   }
 
   getAnswer(): string {
-    return this.getExpectedAnswer() ?? 'Answer not available.';
-  }
-
-  private initializeDrill(): void {
-    this.applySettingsToUiState();
-    this.rebuildPool();
-    this.pickRandom();
-  }
-
-  private applySettingsToUiState(): void {
-    this.settings = this.settingsSvc.load();
-
-    this.resetRoundState();
-  }
-
-  private resetRoundState(): void {
-    this.errorMessage = '';
-    this.userAnswer = '';
-    this.showAnswer = false;
-    this.showHints = this.settings.alwaysShowHints;
-    this.showEnglish = this.settings.showEnglish;
-    this.wrongAttempts = 0;
-  }
-
-  private rebuildPool(): void {
-    const pool: DrillTriple[] = [];
-
-    for (const verb of this.verbs) {
-      if (!this.settings.groups.includes(verb.group)) {
-        continue;
-      }
-
-      if (!this.matchesReflexiveFilter(verb)) {
-        continue;
-      }
-
-      if (!this.matchesAuxiliaryFilter(verb)) {
-        continue;
-      }
-
-      const availableTenses = Object.keys(verb.tenses) as Tense[];
-
-      for (const tense of availableTenses) {
-        if (!this.settings.tenses.includes(tense)) {
-          continue;
-        }
-
-        const tenseData = verb.tenses[tense];
-        if (!tenseData) {
-          continue;
-        }
-
-        const pronouns = Object.keys(tenseData.conjugations) as Pronoun[];
-
-        for (const pronoun of pronouns) {
-          if (!this.settings.subjects.includes(pronoun)) {
-            continue;
-          }
-
-          const conjugation = tenseData.conjugations[pronoun];
-          if (!conjugation?.value) {
-            continue;
-          }
-
-          if (!this.matchesIrregularFilter(conjugation.isIrregular === true)) {
-            continue;
-          }
-
-          pool.push({ verb, tense, pronoun });
-        }
-      }
-    }
-
-    this.validTriples = pool;
-  }
-
-  private matchesIrregularFilter(isIrregular: boolean): boolean {
-    switch (this.settings.irregularFilter) {
-      case 'irregular':
-        return isIrregular;
-      case 'regular':
-        return !isIrregular;
-      default:
-        return true;
-    }
-  }
-
-  private matchesReflexiveFilter(verb: Verb): boolean {
-    if (this.settings.reflexiveFilter === 'all') {
-      return true;
-    }
-
-    if (this.settings.reflexiveFilter === 'reflexiveOnly') {
-      return verb.isReflexive;
-    }
-
-    if (this.settings.reflexiveFilter === 'excludeReflexive') {
-      return !verb.isReflexive;
-    }
-
-    return true;
-  }
-
-  private matchesAuxiliaryFilter(verb: Verb): boolean {
-    const wantAvoir = this.settings.auxiliaries.includes('avoir');
-    const wantEtre = this.settings.auxiliaries.includes('etre');
-
-    // if both auxiliaries are allowed, accept any verb
-    if (wantAvoir && wantEtre) return true;
-
-    // if only avoir is allowed, require verb.usesAvoirAuxiliaryInPasseCompose === true
-    if (wantAvoir && !wantEtre) return verb.usesAvoirAuxiliaryInPasseCompose === true;
-
-    // if only etre is allowed, require verb.usesAvoirAuxiliaryInPasseCompose === false
-    if (wantEtre && !wantAvoir) return verb.usesAvoirAuxiliaryInPasseCompose === false;
-
-    // otherwise, no auxiliary selected (should be prevented elsewhere)
-    return false;
+    return this.expectedAnswer ?? 'Answer not available.';
   }
 
   private pickRandom(): void {
@@ -287,7 +271,8 @@ export class VerbDrillComponent implements OnInit {
       }
     }
 
-    if (this.settings.negatives == 'all') this.isCurrentlyNegative = this.randomFrom([true, false]);
+    if (this.settings.negatives == 'all')
+      this.isCurrentlyNegative = this.verbDrillService.randomFrom([true, false]);
     else this.isCurrentlyNegative = this.settings.negatives === 'negativeOnly';
 
     const choice = candidates[Math.floor(Math.random() * candidates.length)];
@@ -308,27 +293,24 @@ export class VerbDrillComponent implements OnInit {
     return this.currentVerb.tenses[this.currentTense] ?? null;
   }
 
-  //TODO: add back in the male forms when we have passe compose being gendered
   private getDisplayPronoun(pronoun: Pronoun): string {
     switch (pronoun) {
       case 'elle':
-        return this.randomFrom(['elle']);
-      //return this.randomFrom(['elle', 'il', 'on']);
+        return this.verbDrillService.randomFrom(['elle', 'il', 'on']);
       case 'elles':
-        return this.randomFrom(['elles']);
-      // return this.randomFrom(['elles', 'ils']);
+        return this.verbDrillService.randomFrom(['elles', 'ils']);
       case 'je':
-        return this.getJeForm();
+        return this.JeForm;
       default:
         return pronoun;
     }
   }
 
   // Handle "je" elision based on the expected answer (e.g. "j'aime", "j'habite")
-  private getJeForm() {
-    const expectedAnswer = this.getBaseExpectedAnswer();
+  private get JeForm() {
+    const expectedAnswer = this.baseExpectedAnswer;
 
-    if (!expectedAnswer) return 'je';
+    if (!expectedAnswer || this.isCurrentlyNegative) return 'je';
 
     if (/^[aeiouh]/i.test(expectedAnswer)) {
       return "j'";
@@ -337,154 +319,52 @@ export class VerbDrillComponent implements OnInit {
     return 'je';
   }
 
-  getDisplayTense(): string {
+  get displayTense(): string {
     return TENSE_LABELS[this.currentTense] ?? this.currentTense;
   }
 
-  private randomFrom<T>(items: T[]): T {
-    return items[Math.floor(Math.random() * items.length)];
-  }
-
   //gets the expected conjugation, but doesn't include negatives
-  private getBaseExpectedAnswer(): string | null {
+  private get baseExpectedAnswer(): string {
     const tenseData = this.getCurrentTenseData();
 
     if (!tenseData || !this.currentPronoun) {
-      return null;
+      return '';
     }
 
-    return tenseData.conjugations[this.currentPronoun]?.value ?? null;
+    const baseAnswer = tenseData.conjugations[this.currentPronoun]?.value ?? '';
+
+    if (this.currentTense == 'passeCompose')
+      return this.verbDrillService.toMasculinePasseCompose(baseAnswer, this.currentDisplayPronoun);
+    else return baseAnswer;
   }
 
   //returns the expected answer and will add ne and pas if negative
-  private getExpectedAnswer(): string | null {
-    const baseAnswer = this.getBaseExpectedAnswer();
+  private get expectedAnswer(): string {
+    const baseAnswer = this.baseExpectedAnswer;
 
-    if (!baseAnswer) return null;
-
-    if (!this.isCurrentlyNegative) return baseAnswer;
-
-    return this.toNegativeForm(baseAnswer);
+    if (!baseAnswer) return '';
+    return this.createExpectedAnswer(baseAnswer);
   }
 
-  private answersMatch(userAnswer: string, expectedAnswer: string): boolean {
-    const removeAccents = !(this.settings?.requireAccents === true);
-    return (
-      this.normalizeForCompare(userAnswer, removeAccents) ===
-      this.normalizeForCompare(expectedAnswer, removeAccents)
-    );
+  private createExpectedAnswer(possibleAnswer: string): string {
+    if (!this.isCurrentlyNegative) return possibleAnswer;
+
+    return this.verbDrillService.toNegativeForm(possibleAnswer);
   }
 
-  private normalizeForCompare(value: string, removeAccents = true): string {
-    let v = value ?? '';
-    v = v.normalize('NFD');
-    if (removeAccents) {
-      // remove diacritics when accents are not required
-      v = v.replace(/\p{Diacritic}/gu, '');
-    }
-    return v.toLowerCase().trim().replace(/\s+/g, ' ');
+  protected insertAccent(char: string): void {
+    const input = this.answerInput.nativeElement;
+    const start = input.selectionStart ?? this.userAnswer.length;
+    const end = input.selectionEnd ?? this.userAnswer.length;
+
+    this.userAnswer = this.userAnswer.slice(0, start) + char + this.userAnswer.slice(end);
+    this.refocusOnInput();
   }
 
-  private toNegativeForm(value: string): string {
-    // reflexive (starts with me/te/se/nous/vous)
-    if (/^(me|te|se|nous|vous)\s/.test(value)) {
-      return value.replace(/^(me|te|se|nous|vous)\s/, (match) => `ne ${match}`) + ' pas';
-    }
-
-    return `ne ${value} pas`;
-  }
-
-  private buildDetailedMismatchMessage(expected: string, actual: string): string {
-    const expectedTokens = this.tokenizeFrench(expected);
-    const actualTokens = this.tokenizeFrench(actual);
-
-    const aligned = this.alignTokens(expectedTokens, actualTokens);
-
-    return aligned.join(' ');
-  }
-
-  private tokenizeFrench(value: string): string[] {
-    return value.trim().match(/[A-Za-zÀ-ÿŒœÆæ]+(?:[-'’][A-Za-zÀ-ÿŒœÆæ]+)*/g) ?? [];
-  }
-
-  private normalizeToken(value: string): string {
-    return value
-      .normalize('NFD')
-      .replace(/\p{Diacritic}/gu, '')
-      .replace(/’/g, "'")
-      .toLowerCase();
-  }
-
-  private alignTokens(expected: string[], actual: string[]): string[] {
-    const m = expected.length;
-    const n = actual.length;
-
-    const dp: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
-
-    for (let i = 0; i <= m; i++) {
-      dp[i][0] = i;
-    }
-
-    for (let j = 0; j <= n; j++) {
-      dp[0][j] = 0; // extra user words are ignored
-    }
-
-    for (let i = 1; i <= m; i++) {
-      for (let j = 1; j <= n; j++) {
-        const expectedNorm = this.normalizeToken(expected[i - 1]);
-        const actualNorm = this.normalizeToken(actual[j - 1]);
-
-        if (expectedNorm === actualNorm) {
-          dp[i][j] = dp[i - 1][j - 1];
-        } else {
-          dp[i][j] = Math.min(
-            dp[i - 1][j - 1] + 1, // substitution
-            dp[i - 1][j] + 1, // missing expected word
-            dp[i][j - 1], // ignore extra user word
-          );
-        }
-      }
-    }
-
-    const result: string[] = [];
-    let i = m;
-    let j = n;
-
-    while (i > 0) {
-      if (j > 0) {
-        const expectedNorm = this.normalizeToken(expected[i - 1]);
-        const actualNorm = this.normalizeToken(actual[j - 1]);
-
-        if (expectedNorm === actualNorm && dp[i][j] === dp[i - 1][j - 1]) {
-          result.unshift(expected[i - 1]);
-          i--;
-          j--;
-          continue;
-        }
-
-        if (dp[i][j] === dp[i - 1][j - 1] + 1) {
-          result.unshift(`*${expected[i - 1]}*`);
-          i--;
-          j--;
-          continue;
-        }
-
-        if (dp[i][j] === dp[i - 1][j] + 1) {
-          result.unshift(`+${expected[i - 1]}`);
-          i--;
-          continue;
-        }
-
-        if (dp[i][j] === dp[i][j - 1]) {
-          j--;
-          continue;
-        }
-      } else {
-        result.unshift(`+${expected[i - 1]}`);
-        i--;
-      }
-    }
-
-    return result;
+  private refocusOnInput() {
+    const input = this.answerInput.nativeElement;
+    input.focus();
+    const newCursorPos = this.userAnswer.length;
+    input.setSelectionRange(newCursorPos, newCursorPos);
   }
 }
