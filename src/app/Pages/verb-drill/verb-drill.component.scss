@@ -1,0 +1,13 @@
+.container {
+  max-width: 720px;
+}
+
+p-card {
+  display: block;
+}
+
+/* small adjustments for PrimeNG + Bootstrap look */
+.card.card-body {
+  border: 0;
+  padding: 1rem;
+}
