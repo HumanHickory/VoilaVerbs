@@ -46,6 +46,11 @@ export class VerbDrillComponent implements OnInit {
   showEnglish = true;
   errorMessage = '';
 
+  //TODO
+  //Set up accent buttons
+  //Set up "why this is wrong" if possible
+  //
+
   accentCharacters = [
     'à',
     'â',
