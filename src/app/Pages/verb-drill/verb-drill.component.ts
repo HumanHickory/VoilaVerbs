@@ -30,6 +30,7 @@ export class VerbDrillComponent implements OnInit {
 
   private validTriples: DrillTriple[] = [];
   private settings: VerbSettings;
+  private maxWrongAttempts = 3;
 
   // remember the last verb used so we can prefer a different verb next time
   private lastVerb: Verb | null = null;
@@ -39,6 +40,7 @@ export class VerbDrillComponent implements OnInit {
   currentPronoun!: Pronoun; //actual pronoun
   currentDisplayPronoun!: string; //display pronoun (elle might be the current pronoun, but il/on/elle might be displayed)
   isCurrentlyNegative: boolean = false;
+  wrongAttempts = 0;
 
   userAnswer = '';
   showHints = false;
@@ -48,8 +50,8 @@ export class VerbDrillComponent implements OnInit {
 
   //TODO
   //Set up accent buttons
-  //Set up "why this is wrong" if possible
-  //
+  //Update"why this is wrong"
+  //Set up passe compose to ignore gendered conjugations
 
   accentCharacters = [
     'à',
@@ -100,9 +102,14 @@ export class VerbDrillComponent implements OnInit {
       return;
     }
 
-    this.errorMessage = 'Incorrect — try again.';
+    this.wrongAttempts++;
 
-    this.userAnswer = '';
+    if (this.wrongAttempts >= this.maxWrongAttempts) {
+      this.errorMessage = this.buildDetailedMismatchMessage(expected, this.userAnswer);
+    } else {
+      this.errorMessage = 'Incorrect — try again.';
+    }
+    if (this.settings.resetAnswersOnMismatch) this.userAnswer = '';
   }
 
   toggleHints(): void {
@@ -163,6 +170,7 @@ export class VerbDrillComponent implements OnInit {
     this.showAnswer = false;
     this.showHints = this.settings.alwaysShowHints;
     this.showEnglish = this.settings.showEnglish;
+    this.wrongAttempts = 0;
   }
 
   private rebuildPool(): void {
@@ -300,11 +308,14 @@ export class VerbDrillComponent implements OnInit {
     return this.currentVerb.tenses[this.currentTense] ?? null;
   }
 
+  //TODO: add back in the male forms when we have passe compose being gendered
   private getDisplayPronoun(pronoun: Pronoun): string {
     switch (pronoun) {
       case 'elle':
-        return this.randomFrom(['elle', 'il', 'on']);
+        return this.randomFrom(['elle']);
+      //return this.randomFrom(['elle', 'il', 'on']);
       case 'elles':
+        //return this.randomFrom(['elles']);
         return this.randomFrom(['elles', 'ils']);
       case 'je':
         return this.getJeForm();
@@ -357,16 +368,21 @@ export class VerbDrillComponent implements OnInit {
   }
 
   private answersMatch(userAnswer: string, expectedAnswer: string): boolean {
-    return this.normalizeForCompare(userAnswer) === this.normalizeForCompare(expectedAnswer);
+    const removeAccents = !(this.settings?.requireAccents === true);
+    return (
+      this.normalizeForCompare(userAnswer, removeAccents) ===
+      this.normalizeForCompare(expectedAnswer, removeAccents)
+    );
   }
 
-  private normalizeForCompare(value: string): string {
-    return value
-      .normalize('NFD')
-      .replace(/\p{Diacritic}/gu, '')
-      .toLowerCase()
-      .trim()
-      .replace(/\s+/g, ' ');
+  private normalizeForCompare(value: string, removeAccents = true): string {
+    let v = value ?? '';
+    v = v.normalize('NFD');
+    if (removeAccents) {
+      // remove diacritics when accents are not required
+      v = v.replace(/\p{Diacritic}/gu, '');
+    }
+    return v.toLowerCase().trim().replace(/\s+/g, ' ');
   }
 
   private toNegativeForm(value: string): string {
@@ -376,5 +392,99 @@ export class VerbDrillComponent implements OnInit {
     }
 
     return `ne ${value} pas`;
+  }
+
+  private buildDetailedMismatchMessage(expected: string, actual: string): string {
+    const expectedTokens = this.tokenizeFrench(expected);
+    const actualTokens = this.tokenizeFrench(actual);
+
+    const aligned = this.alignTokens(expectedTokens, actualTokens);
+
+    return aligned.join(' ');
+  }
+
+  private tokenizeFrench(value: string): string[] {
+    return value.trim().match(/[A-Za-zÀ-ÿŒœÆæ]+(?:[-'’][A-Za-zÀ-ÿŒœÆæ]+)*/g) ?? [];
+  }
+
+  private normalizeToken(value: string): string {
+    return value
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .replace(/’/g, "'")
+      .toLowerCase();
+  }
+
+  private alignTokens(expected: string[], actual: string[]): string[] {
+    const m = expected.length;
+    const n = actual.length;
+
+    const dp: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+
+    for (let i = 0; i <= m; i++) {
+      dp[i][0] = i;
+    }
+
+    for (let j = 0; j <= n; j++) {
+      dp[0][j] = 0; // extra user words are ignored
+    }
+
+    for (let i = 1; i <= m; i++) {
+      for (let j = 1; j <= n; j++) {
+        const expectedNorm = this.normalizeToken(expected[i - 1]);
+        const actualNorm = this.normalizeToken(actual[j - 1]);
+
+        if (expectedNorm === actualNorm) {
+          dp[i][j] = dp[i - 1][j - 1];
+        } else {
+          dp[i][j] = Math.min(
+            dp[i - 1][j - 1] + 1, // substitution
+            dp[i - 1][j] + 1, // missing expected word
+            dp[i][j - 1], // ignore extra user word
+          );
+        }
+      }
+    }
+
+    const result: string[] = [];
+    let i = m;
+    let j = n;
+
+    while (i > 0) {
+      if (j > 0) {
+        const expectedNorm = this.normalizeToken(expected[i - 1]);
+        const actualNorm = this.normalizeToken(actual[j - 1]);
+
+        if (expectedNorm === actualNorm && dp[i][j] === dp[i - 1][j - 1]) {
+          result.unshift(expected[i - 1]);
+          i--;
+          j--;
+          continue;
+        }
+
+        if (dp[i][j] === dp[i - 1][j - 1] + 1) {
+          result.unshift(`*${expected[i - 1]}*`);
+          i--;
+          j--;
+          continue;
+        }
+
+        if (dp[i][j] === dp[i - 1][j] + 1) {
+          result.unshift(`+${expected[i - 1]}`);
+          i--;
+          continue;
+        }
+
+        if (dp[i][j] === dp[i][j - 1]) {
+          j--;
+          continue;
+        }
+      } else {
+        result.unshift(`+${expected[i - 1]}`);
+        i--;
+      }
+    }
+
+    return result;
   }
 }
