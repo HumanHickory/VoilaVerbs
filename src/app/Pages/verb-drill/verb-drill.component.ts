@@ -12,6 +12,10 @@ import { TENSE_LABELS } from '../../Enums/tense.enum';
 import type { Pronoun } from '../../Enums/pronoun.enum';
 import { verbs } from '../../Verbs/VERBS.const';
 import { VerbDrillService } from '../../Services/verbDrill.service';
+import { PastParticipleService } from '../../Services/pastParticiple.service';
+import { UtilityService } from '../../Services/utility.service';
+import { TenseService } from '../../Services/tense.service';
+import { TenseDescription } from '../../Models/tense-description.model';
 
 type DrillTriple = {
   verb: Verb;
@@ -76,6 +80,9 @@ export class VerbDrillComponent implements OnInit {
     private readonly router: Router,
     private readonly settingsSvc: SettingsService,
     private readonly verbDrillService: VerbDrillService,
+    private readonly pastParticipleService: PastParticipleService,
+    private readonly utilityService: UtilityService,
+    private readonly tenseService: TenseService,
   ) {
     this.settings = this.settingsSvc.load();
   }
@@ -112,27 +119,53 @@ export class VerbDrillComponent implements OnInit {
         !this.verbDrillService.matchesGroup(verb) ||
         !this.verbDrillService.matchesReflexiveFilter(verb) ||
         !this.verbDrillService.matchesAuxiliaryFilter(verb)
-      )
+      ) {
         continue;
+      }
 
       const availableTenses = Object.keys(verb.tenses) as Tense[];
+      availableTenses.push('passeCompose');
+      availableTenses.push('plusQueParfait');
 
       for (const tense of availableTenses) {
-        if (!this.settings.tenses.includes(tense)) continue;
+        if (!this.settings.tenses.includes(tense)) {
+          continue;
+        }
+
+        const isCompoundTense = this.utilityService.compoundTenses.includes(tense);
+
+        if (isCompoundTense) {
+          if (!verb.pastParticiple || !verb.pastParticiple.trim()) {
+            continue;
+          }
+
+          for (const pronoun of this.settings.subjects) {
+            pool.push({ verb, tense, pronoun });
+          }
+
+          continue;
+        }
 
         const tenseData = verb.tenses[tense];
-        if (!tenseData) continue;
+        if (!tenseData) {
+          continue;
+        }
 
         const pronouns = Object.keys(tenseData.conjugations) as Pronoun[];
 
         for (const pronoun of pronouns) {
-          if (!this.settings.subjects.includes(pronoun)) continue;
+          if (!this.settings.subjects.includes(pronoun)) {
+            continue;
+          }
 
           const conjugation = tenseData.conjugations[pronoun];
-          if (!conjugation?.value) continue;
-
-          if (!this.verbDrillService.matchesIrregularFilter(conjugation.isIrregular === true))
+          if (!conjugation?.value) {
             continue;
+          }
+
+          if (!this.verbDrillService.matchesIrregularFilter(conjugation.isIrregular === true)) {
+            continue;
+          }
 
           pool.push({ verb, tense, pronoun });
         }
@@ -144,7 +177,6 @@ export class VerbDrillComponent implements OnInit {
 
   submit(): void {
     const expected = this.expectedAnswer;
-    const tenseData = this.getCurrentTenseData();
 
     let errMessage = 'Incorrect — try again.';
     if (!expected) {
@@ -152,9 +184,15 @@ export class VerbDrillComponent implements OnInit {
       return;
     }
 
-    if (tenseData == null) return;
-
-    if (this.verbDrillService.answerMatches(this.userAnswer, expected)) {
+    if (
+      this.verbDrillService.answerIsAcceptable(
+        this.userAnswer,
+        expected,
+        this.currentVerb,
+        this.currentTense,
+        this.currentPronoun,
+      )
+    ) {
       this.resetRoundState();
       this.pickRandom();
       this.refocusOnInput();
@@ -166,37 +204,20 @@ export class VerbDrillComponent implements OnInit {
     if (this.verbDrillService.answerMatchesWithNoAccent(this.userAnswer, expected))
       errMessage = 'So Close! Missing Diacritics';
     else if (
-      this.currentTense == 'passeCompose' &&
-      this.currentVerb.usesAvoirAuxiliaryInPasseCompose === false &&
-      (this.currentPronoun == 'elle' || this.currentPronoun == 'elles')
+      this.utilityService.compoundTenses.includes(this.currentTense) &&
+      this.currentVerb.usesAvoirAuxiliaryInPasseCompose === false
     ) {
-      //if it's an etre 3rd person passe verb (which will have gender and plural agreement)
+      //etre auxilary verbs change the past participle for gender and/or plurality (je + aller can be je suis alle or je suis allee, for example)
       //then see if their answer matches a different version of that agreement, and give them a more helpful suggestion
-      const singularFeminine = tenseData.conjugations['elle']?.value ?? '';
-      const pluralFeminine = tenseData.conjugations['elles']?.value ?? '';
+      const allPastParticiplesConjugations = this.createEtreConjugations();
+      let simulatedAnswers = [];
 
-      const singularMasculine = this.verbDrillService.toMasculinePasseCompose(
-        singularFeminine,
-        'il',
-      );
-
-      const pluralMasculine = this.verbDrillService.toMasculinePasseCompose(pluralFeminine, 'ils');
-
-      //might as well get all of them, even though we know it doesn't match one (the correct answer)
-      const simulatedAnswerSingleFem = this.createExpectedAnswer(singularFeminine);
-      const simulatedAnswerPluralFem = this.createExpectedAnswer(pluralFeminine);
-      const simulatedAnswerSingleMasc = this.createExpectedAnswer(singularMasculine);
-      const simulatedAnswerPluralMasc = this.createExpectedAnswer(pluralMasculine);
+      allPastParticiplesConjugations.forEach((conjugation) => {
+        simulatedAnswers.push(this.createExpectedAnswer(conjugation));
+      });
 
       //if the answer matches any of the passe compose versions, then give them a more helpful suggestion
-      if (
-        this.verbDrillService.answersMatch(this.userAnswer, [
-          simulatedAnswerSingleFem,
-          simulatedAnswerPluralFem,
-          simulatedAnswerSingleMasc,
-          simulatedAnswerPluralMasc,
-        ])
-      )
+      if (this.verbDrillService.answersMatch(this.userAnswer, allPastParticiplesConjugations))
         errMessage = 'So Close! Check gender or plural agreement in passé composé.';
     }
 
@@ -221,36 +242,60 @@ export class VerbDrillComponent implements OnInit {
     this.showAnswer = show;
   }
 
+  learnAboutTense() {}
+
   openSettings(): void {
     this.router.navigateByUrl('/settings');
   }
 
   getHint(): string {
-    const tenseData = this.getCurrentTenseData();
+    if (!this.currentPronoun) return 'Current Pronoun Missing, cannot get hint.';
 
-    if (!tenseData || !this.currentPronoun) {
-      return 'No hints available.';
-    }
+    if (this.utilityService.compoundTenses.includes(this.currentTense)) {
+      let hint = '';
+      if (this.currentVerb.isReflexive) hint += 'Reflexive Pronoun + ';
 
-    const conjugation = tenseData.conjugations[this.currentPronoun];
+      if (this.currentVerb.usesAvoirAuxiliaryInPasseCompose) hint += 'Avoir ';
+      else hint += 'Etre ';
 
-    if (conjugation?.customHint) {
-      return conjugation.customHint;
-    }
+      if (this.currentTense == 'passeCompose') hint += '(present tense) + ';
+      else if (this.currentTense == 'plusQueParfait') hint += '(imparfait tense) + ';
 
-    if (conjugation?.isIrregular && tenseData.irregularStemHint) {
-      return tenseData.irregularStemHint;
-    }
+      hint += `past participle (${this.currentVerb.pastParticiple}) `;
+      if (!this.currentVerb.usesAvoirAuxiliaryInPasseCompose)
+        hint += '(Remember the past participle must have gender and plural agreement)';
 
-    if (tenseData.baseRuleHint) {
-      return tenseData.baseRuleHint;
+      return hint;
+    } else {
+      const tenseData = this.getCurrentTenseData();
+
+      if (!tenseData) return 'Tense Data Missing, cannot get hint';
+
+      const conjugation = tenseData.conjugations[this.currentPronoun];
+
+      if (conjugation?.customHint) {
+        return conjugation.customHint;
+      }
+
+      if (conjugation?.isIrregular && tenseData.irregularStemHint) {
+        return tenseData.irregularStemHint;
+      }
+
+      if (tenseData.baseRuleHint) {
+        return tenseData.baseRuleHint;
+      }
     }
 
     return 'No hints available.';
   }
 
+  //used for show answer button
   getAnswer(): string {
     return this.expectedAnswer ?? 'Answer not available.';
+  }
+
+  tenseDescription(): TenseDescription {
+    return this.tenseService.learnATense(this.currentTense);
   }
 
   private pickRandom(): void {
@@ -272,7 +317,7 @@ export class VerbDrillComponent implements OnInit {
     }
 
     if (this.settings.negatives == 'all')
-      this.isCurrentlyNegative = this.verbDrillService.randomFrom([true, false]);
+      this.isCurrentlyNegative = this.utilityService.randomFrom([true, false]);
     else this.isCurrentlyNegative = this.settings.negatives === 'negativeOnly';
 
     const choice = candidates[Math.floor(Math.random() * candidates.length)];
@@ -296,9 +341,9 @@ export class VerbDrillComponent implements OnInit {
   private getDisplayPronoun(pronoun: Pronoun): string {
     switch (pronoun) {
       case 'elle':
-        return this.verbDrillService.randomFrom(['elle', 'il', 'on']);
+        return this.utilityService.randomFrom(['elle', 'il', 'on']);
       case 'elles':
-        return this.verbDrillService.randomFrom(['elles', 'ils']);
+        return this.utilityService.randomFrom(['elles', 'ils']);
       case 'je':
         return this.JeForm;
       default:
@@ -325,17 +370,24 @@ export class VerbDrillComponent implements OnInit {
 
   //gets the expected conjugation, but doesn't include negatives
   private get baseExpectedAnswer(): string {
-    const tenseData = this.getCurrentTenseData();
+    if (!this.currentPronoun) return '';
 
-    if (!tenseData || !this.currentPronoun) {
-      return '';
+    let baseAnswer = '';
+    if (this.utilityService.compoundTenses.includes(this.currentTense))
+      baseAnswer = this.pastParticipleService.getConjugation(
+        this.currentVerb,
+        this.currentPronoun,
+        this.currentTense,
+        this.utilityService.isFemininePronoun(this.currentDisplayPronoun),
+      );
+    else {
+      const tenseData = this.getCurrentTenseData();
+      if (!tenseData) return '';
+
+      baseAnswer = tenseData.conjugations[this.currentPronoun]?.value ?? '';
     }
 
-    const baseAnswer = tenseData.conjugations[this.currentPronoun]?.value ?? '';
-
-    if (this.currentTense == 'passeCompose')
-      return this.verbDrillService.toMasculinePasseCompose(baseAnswer, this.currentDisplayPronoun);
-    else return baseAnswer;
+    return baseAnswer;
   }
 
   //returns the expected answer and will add ne and pas if negative
@@ -348,12 +400,41 @@ export class VerbDrillComponent implements OnInit {
 
   private createExpectedAnswer(possibleAnswer: string): string {
     if (!this.isCurrentlyNegative) return possibleAnswer;
-
-    return this.verbDrillService.toNegativeForm(possibleAnswer);
+    return this.utilityService.toNegativeForm(possibleAnswer);
   }
 
   get showOnScreenAccents(): boolean {
     return this.settings.showOnScreenAccents;
+  }
+
+  private createEtreConjugations(): string[] {
+    const singularFeminine = this.pastParticipleService.getConjugation(
+      this.currentVerb,
+      'elle',
+      this.currentTense,
+      true,
+    );
+    const pluralFeminine = this.pastParticipleService.getConjugation(
+      this.currentVerb,
+      'elles',
+      this.currentTense,
+      true,
+    );
+    const singularMasculine = this.pastParticipleService.getConjugation(
+      this.currentVerb,
+      'elle',
+      this.currentTense,
+      false,
+    );
+    const pluralMasculine = this.pastParticipleService.getConjugation(
+      this.currentVerb,
+      'elles',
+      this.currentTense,
+      false,
+    );
+
+    const conjugations = [singularFeminine, pluralFeminine, singularMasculine, pluralMasculine];
+    return conjugations;
   }
 
   protected insertAccent(char: string): void {

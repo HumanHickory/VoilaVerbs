@@ -6,6 +6,7 @@ export const seLever: Verb = {
   group: 'er',
   isReflexive: true,
   usesAvoirAuxiliaryInPasseCompose: false,
+  pastParticiple: 'levé',
 
   tenses: {
     present: {
@@ -41,18 +42,6 @@ export const seLever: Verb = {
         nous: { value: 'nous lèverons', isIrregular: true },
         vous: { value: 'vous lèverez', isIrregular: true },
         elles: { value: 'se lèveront', isIrregular: true },
-      },
-    },
-
-    passeCompose: {
-      baseRuleHint: 'reflexive pronoun + present tense être + past participle (levé)',
-      conjugations: {
-        je: { value: 'me suis levé', isIrregular: true },
-        tu: { value: "t'es levé", isIrregular: true },
-        elle: { value: "s'est levé", isIrregular: true },
-        nous: { value: 'nous sommes levés', isIrregular: true },
-        vous: { value: 'vous êtes levés', isIrregular: true },
-        elles: { value: 'se sont levées', isIrregular: true },
       },
     },
 

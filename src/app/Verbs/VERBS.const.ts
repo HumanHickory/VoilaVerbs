@@ -19,6 +19,10 @@ import { seReunir } from './reunir.verb';
 import { seSouvenir } from './souvenir.verb';
 import { venir } from './venir.verb';
 import { voir } from './voir.verb';
+import { cuisiner } from './cusiner.verb';
+import { entrer } from './entrer.verb';
+import { partir } from './partir.verb';
+import { sAsseoir } from './asseoir.verb';
 
 export const verbs: Verb[] = [
   aller,
@@ -40,4 +44,8 @@ export const verbs: Verb[] = [
   seSouvenir,
   venir,
   voir,
+  cuisiner,
+  entrer,
+  partir,
+  sAsseoir,
 ];

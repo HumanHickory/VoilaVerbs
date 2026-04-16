@@ -6,6 +6,7 @@ export const voir: Verb = {
   isReflexive: false,
   usesAvoirAuxiliaryInPasseCompose: true,
   group: 'irregular',
+  pastParticiple: 'vu',
   tenses: {
     present: {
       baseRuleHint: 'irregular present forms (vois/vois/voit/voyons/voyez/voient)',
@@ -40,17 +41,7 @@ export const voir: Verb = {
         elles: { value: 'verront', isIrregular: true },
       },
     },
-    passeCompose: {
-      baseRuleHint: 'present tense avoir + past participle (vu)',
-      conjugations: {
-        je: { value: 'ai vu', isIrregular: true },
-        tu: { value: 'as vu', isIrregular: true },
-        elle: { value: 'a vu', isIrregular: true },
-        nous: { value: 'avons vu', isIrregular: true },
-        vous: { value: 'avez vu', isIrregular: true },
-        elles: { value: 'ont vu', isIrregular: true },
-      },
-    },
+
     subjonctif: {
       baseRuleHint: 'use stem voi- + e/es/e/ions/iez/ent (note nous/vous use voy- stem)',
       conjugations: {

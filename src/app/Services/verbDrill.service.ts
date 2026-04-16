@@ -2,21 +2,60 @@ import { Injectable } from '@angular/core';
 import { SettingsService } from './settings.service';
 import { Pronoun } from '../Enums/pronoun.enum';
 import { Verb } from '../Models/verb';
+import { Tense } from '../Enums/tense.enum';
+import { PastParticipleService } from './pastParticiple.service';
+import { UtilityService } from './utility.service';
 
 @Injectable({ providedIn: 'root' })
 export class VerbDrillService {
-  constructor(private readonly settingsSvc: SettingsService) {}
-
-  randomFrom<T>(items: T[]): T {
-    return items[Math.floor(Math.random() * items.length)];
-  }
+  constructor(
+    private readonly settingsSvc: SettingsService,
+    private readonly pastParticipleService: PastParticipleService,
+    private readonly utilityService: UtilityService,
+  ) {}
 
   answerMatches(userAnswer: string, expectedAnswer: string): boolean {
     const removeAccents = !(this.settingsSvc.load().requireAccents === true);
     return (
-      this.normalizeForCompare(userAnswer, removeAccents) ===
-      this.normalizeForCompare(expectedAnswer, removeAccents)
+      this.utilityService.normalizeForCompare(userAnswer, removeAccents) ===
+      this.utilityService.normalizeForCompare(expectedAnswer, removeAccents)
     );
+  }
+
+  answerIsAcceptable(
+    userAnswer: string,
+    expectedAnswer: string,
+    verb: Verb,
+    tense: Tense,
+    pronoun: Pronoun,
+  ) {
+    //if the answer matches the expected answer, obviously acceptable
+    if (this.answerMatches(userAnswer, expectedAnswer)) return true;
+
+    //but if it's not a compound tense and it doesn't match, then it's not acceptable
+    if (!this.utilityService.compoundTenses.includes(tense)) return false;
+
+    //these are gendered and account for plural, so if it didn't match before, it's not going to match now
+    if (pronoun == 'elle' || pronoun == 'elles') return false;
+
+    //get the fem and masc conjugations (will use 'pronoun' to determine if singular or plural)
+    const feminineConjugation = this.pastParticipleService.getConjugation(
+      verb,
+      pronoun,
+      tense,
+      true,
+    );
+
+    const masculineConjugation = this.pastParticipleService.getConjugation(
+      verb,
+      pronoun,
+      tense,
+      false,
+    );
+
+    //if either expected answer is acceptable, then return true
+    const expectedAnswers = [feminineConjugation, masculineConjugation];
+    return this.answersMatch(userAnswer, expectedAnswers);
   }
 
   answersMatch(userAnswer: string, expectedAnswers: string[]): boolean {
@@ -24,59 +63,16 @@ export class VerbDrillService {
 
     return expectedAnswers.some(
       (expAns) =>
-        this.normalizeForCompare(userAnswer, removeAccents) ===
-        this.normalizeForCompare(expAns, removeAccents),
+        this.utilityService.normalizeForCompare(userAnswer, removeAccents) ===
+        this.utilityService.normalizeForCompare(expAns, removeAccents),
     );
   }
 
   answerMatchesWithNoAccent(userAnswer: string, expectedAnswer: string): boolean {
     return (
-      this.normalizeForCompare(userAnswer, true) === this.normalizeForCompare(expectedAnswer, true)
+      this.utilityService.normalizeForCompare(userAnswer, true) ===
+      this.utilityService.normalizeForCompare(expectedAnswer, true)
     );
-  }
-
-  private normalizeForCompare(value: string, removeAccents = true): string {
-    let v = value ?? '';
-    v = v.normalize('NFD'); //this separates the letter and diacritic so "é" becomes "e" + "́ ", which allows us to remove the diacritic
-    if (removeAccents) v = v.replace(/\p{Diacritic}/gu, ''); // remove diacritics when accents are not required
-
-    //.replace(/\s+/g, ' ') = removes extra white space between words (ne    parle = ne parle)
-    //.replace(/[’]/g, "'") = changes the curly apostrophe into a normal apostrophe
-    return v.toLowerCase().trim().replace(/\s+/g, ' ').replace(/[’]/g, "'");
-  }
-
-  toMasculinePasseCompose(answer: string, displayPronoun: string): string {
-    if (displayPronoun === 'il' || displayPronoun === 'on')
-      return answer.replace(/ée\b/g, 'é').replace(/ie\b/g, 'i').replace(/ue\b/g, 'u');
-
-    if (displayPronoun === 'ils')
-      return answer.replace(/ées\b/g, 'és').replace(/ies\b/g, 'is').replace(/ues\b/g, 'us');
-
-    return answer;
-  }
-
-  toNegativeForm(value: string): string {
-    const v = value.trim().replace(/[’]/g, "'");
-
-    // Already contracted reflexive pronoun, like:
-    // s'est, t'es, m'appelle
-    if (/^(m'|t'|s')/i.test(v)) {
-      return `ne ${v} pas`;
-    }
-
-    // Uncontracted reflexive pronoun, like:
-    // me couche, te leves, se souvient, nous couchons, vous levez
-    if (/^(me|te|se|nous|vous)\b/i.test(v)) {
-      return `ne ${v} pas`;
-    }
-
-    // Non-reflexive form starting with vowel or mute h:
-    // aime, est, habite
-    if (/^[aeiouhàâæéèêëîïôœùûü]/i.test(v)) {
-      return `n'${v} pas`;
-    }
-
-    return `ne ${v} pas`;
   }
 
   matchesIrregularFilter(isIrregular: boolean): boolean {

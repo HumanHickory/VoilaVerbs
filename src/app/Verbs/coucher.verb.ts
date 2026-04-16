@@ -6,6 +6,8 @@ export const seCoucher: Verb = {
   isReflexive: true,
   usesAvoirAuxiliaryInPasseCompose: false,
   group: 'er',
+  pastParticiple: 'couché',
+
   tenses: {
     present: {
       baseRuleHint: 'reflexive pronoun + stem couch- + e/es/e/ons/ez/ent',
@@ -38,17 +40,6 @@ export const seCoucher: Verb = {
         nous: { value: 'nous coucherons' },
         vous: { value: 'vous coucherez' },
         elles: { value: 'se coucheront' },
-      },
-    },
-    passeCompose: {
-      baseRuleHint: 'reflexive pronoun + present tense être + past participle (couché)',
-      conjugations: {
-        je: { value: 'me suis couché' },
-        tu: { value: 't’es couché' },
-        elle: { value: 's’est couchée', isIrregular: true },
-        nous: { value: 'nous sommes couchés' },
-        vous: { value: 'vous êtes couchés' },
-        elles: { value: 'se sont couchées', isIrregular: true },
       },
     },
     subjonctif: {

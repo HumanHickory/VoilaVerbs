@@ -6,6 +6,7 @@ export const seSouvenir: Verb = {
   isReflexive: true,
   usesAvoirAuxiliaryInPasseCompose: false,
   group: 'irregular',
+  pastParticiple: 'souvenu',
   tenses: {
     present: {
       isFullyIrregular: true,
@@ -42,17 +43,7 @@ export const seSouvenir: Verb = {
         elles: { value: 'se souviendront', isIrregular: true },
       },
     },
-    passeCompose: {
-      baseRuleHint: 'reflexive pronoun + present tense être + past participle (souvenu)',
-      conjugations: {
-        je: { value: 'me suis souvenu', isIrregular: true },
-        tu: { value: 't’es souvenu', isIrregular: true },
-        elle: { value: 's’est souvenue', isIrregular: true },
-        nous: { value: 'nous sommes souvenus', isIrregular: true },
-        vous: { value: 'vous êtes souvenus', isIrregular: true },
-        elles: { value: 'se sont souvenues', isIrregular: true },
-      },
-    },
+
     subjonctif: {
       isFullyIrregular: true,
       baseRuleHint:

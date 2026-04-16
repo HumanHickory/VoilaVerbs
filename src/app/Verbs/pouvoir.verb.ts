@@ -6,6 +6,8 @@ export const pouvoir: Verb = {
   isReflexive: false,
   usesAvoirAuxiliaryInPasseCompose: true,
   group: 'irregular',
+  pastParticiple: 'pu',
+
   tenses: {
     present: {
       isFullyIrregular: true,
@@ -41,17 +43,7 @@ export const pouvoir: Verb = {
         elles: { value: 'pourront', isIrregular: true },
       },
     },
-    passeCompose: {
-      baseRuleHint: 'present tense avoir + past participle (pu)',
-      conjugations: {
-        je: { value: 'ai pu', isIrregular: true },
-        tu: { value: 'as pu', isIrregular: true },
-        elle: { value: 'a pu', isIrregular: true },
-        nous: { value: 'avons pu', isIrregular: true },
-        vous: { value: 'avez pu', isIrregular: true },
-        elles: { value: 'ont pu', isIrregular: true },
-      },
-    },
+
     subjonctif: {
       baseRuleHint: 'use stem puiss- + e/es/e/ions/iez/ent',
       conjugations: {

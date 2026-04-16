@@ -3,9 +3,11 @@ import { Verb } from '../Models/verb';
 export const etre: Verb = {
   infinitive: 'être',
   english: 'to be',
+
   group: 'irregular',
   isReflexive: false,
-  usesAvoirAuxiliaryInPasseCompose: false,
+  usesAvoirAuxiliaryInPasseCompose: true,
+  pastParticiple: 'été',
 
   tenses: {
     present: {
@@ -44,19 +46,6 @@ export const etre: Verb = {
         nous: { value: 'serons', isIrregular: true },
         vous: { value: 'serez', isIrregular: true },
         elles: { value: 'seront', isIrregular: true },
-      },
-    },
-
-    passeCompose: {
-      isFullyIrregular: true,
-      baseRuleHint: 'present tense avoir + past participle (été)',
-      conjugations: {
-        je: { value: 'ai été', isIrregular: true },
-        tu: { value: 'as été', isIrregular: true },
-        elle: { value: 'a été', isIrregular: true },
-        nous: { value: 'avons été', isIrregular: true },
-        vous: { value: 'avez été', isIrregular: true },
-        elles: { value: 'ont été', isIrregular: true },
       },
     },
 

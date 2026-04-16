@@ -6,6 +6,8 @@ export const connaitre: Verb = {
   isReflexive: false,
   usesAvoirAuxiliaryInPasseCompose: true,
   group: 'irregular',
+  pastParticiple: 'connu',
+
   tenses: {
     present: {
       baseRuleHint: 'use stem conna- + is/is/ît/issons/issez/issent',
@@ -40,17 +42,7 @@ export const connaitre: Verb = {
         elles: { value: 'connaîtront', isIrregular: true },
       },
     },
-    passeCompose: {
-      baseRuleHint: 'present tense avoir + past participle (connu)',
-      conjugations: {
-        je: { value: 'ai connu', isIrregular: true },
-        tu: { value: 'as connu', isIrregular: true },
-        elle: { value: 'a connu', isIrregular: true },
-        nous: { value: 'avons connu', isIrregular: true },
-        vous: { value: 'avez connu', isIrregular: true },
-        elles: { value: 'ont connu', isIrregular: true },
-      },
-    },
+
     subjonctif: {
       baseRuleHint: 'use stem connaiss- + e/es/e/ions/iez/ent',
       conjugations: {

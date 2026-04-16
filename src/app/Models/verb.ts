@@ -6,6 +6,7 @@ export interface Verb {
   english: string;
   isReflexive: boolean;
   usesAvoirAuxiliaryInPasseCompose: boolean; // only needed for irregular verbs, default true
+  pastParticiple: string;
 
   group: 'er' | 'ir' | 're' | 'irregular';
 

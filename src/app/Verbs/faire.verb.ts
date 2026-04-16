@@ -6,6 +6,8 @@ export const faire: Verb = {
   isReflexive: false,
   usesAvoirAuxiliaryInPasseCompose: true,
   group: 'irregular',
+  pastParticiple: 'fait',
+
   tenses: {
     present: {
       isFullyIrregular: true,
@@ -42,18 +44,7 @@ export const faire: Verb = {
         elles: { value: 'feront', isIrregular: true },
       },
     },
-    passeCompose: {
-      baseRuleHint: 'present tense avoir + past participle (fait)',
-      isFullyIrregular: true,
-      conjugations: {
-        je: { value: 'ai fait', isIrregular: true },
-        tu: { value: 'as fait', isIrregular: true },
-        elle: { value: 'a fait', isIrregular: true },
-        nous: { value: 'avons fait', isIrregular: true },
-        vous: { value: 'avez fait', isIrregular: true },
-        elles: { value: 'ont fait', isIrregular: true },
-      },
-    },
+
     subjonctif: {
       baseRuleHint: 'use stem fass- + e/es/e/ions/iez/ent',
       isFullyIrregular: true,

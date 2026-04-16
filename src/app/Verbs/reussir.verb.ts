@@ -6,6 +6,8 @@ export const reussir: Verb = {
   isReflexive: false,
   usesAvoirAuxiliaryInPasseCompose: true,
   group: 'ir',
+  pastParticiple: 'réussi',
+
   tenses: {
     present: {
       baseRuleHint: 'use stem réuss- + is/is/it/issons/issez/issent',
@@ -38,17 +40,6 @@ export const reussir: Verb = {
         nous: { value: 'réussirons' },
         vous: { value: 'réussirez' },
         elles: { value: 'réussiront' },
-      },
-    },
-    passeCompose: {
-      baseRuleHint: 'present tense avoir + past participle (réussi)',
-      conjugations: {
-        je: { value: 'ai réussi' },
-        tu: { value: 'as réussi' },
-        elle: { value: 'a réussi' },
-        nous: { value: 'avons réussi' },
-        vous: { value: 'avez réussi' },
-        elles: { value: 'ont réussi' },
       },
     },
     subjonctif: {

@@ -6,6 +6,7 @@ export const seReunir: Verb = {
   isReflexive: true,
   usesAvoirAuxiliaryInPasseCompose: false,
   group: 'ir',
+  pastParticiple: 'réuni',
   tenses: {
     present: {
       baseRuleHint: 'reflexive pronoun + use stem réun- + is/is/it/issons/issez/issent',
@@ -40,17 +41,7 @@ export const seReunir: Verb = {
         elles: { value: 'se réuniront' },
       },
     },
-    passeCompose: {
-      baseRuleHint: 'reflexive pronoun + present tense être + past participle (réuni)',
-      conjugations: {
-        je: { value: 'me suis réunie', isIrregular: true },
-        tu: { value: 't’es réunie', isIrregular: true },
-        elle: { value: 's’est réunie', isIrregular: true },
-        nous: { value: 'nous sommes réunies', isIrregular: true },
-        vous: { value: 'vous êtes réunies', isIrregular: true },
-        elles: { value: 'se sont réunies', isIrregular: true },
-      },
-    },
+
     subjonctif: {
       baseRuleHint: 'reflexive pronoun + stem réuniss- + e/es/e/ions/iez/ent',
       conjugations: {

@@ -6,6 +6,7 @@ export const avoir: Verb = {
   isReflexive: false,
   usesAvoirAuxiliaryInPasseCompose: true,
   group: 'irregular',
+  pastParticiple: 'eu',
   tenses: {
     present: {
       isFullyIrregular: true,
@@ -41,18 +42,6 @@ export const avoir: Verb = {
         nous: { value: 'aurons', isIrregular: true },
         vous: { value: 'aurez', isIrregular: true },
         elles: { value: 'auront', isIrregular: true },
-      },
-    },
-    passeCompose: {
-      baseRuleHint: 'present tense avoir + past participle (eu)',
-      isFullyIrregular: true,
-      conjugations: {
-        je: { value: 'ai eu', isIrregular: true },
-        tu: { value: 'as eu', isIrregular: true },
-        elle: { value: 'a eu', isIrregular: true },
-        nous: { value: 'avons eu', isIrregular: true },
-        vous: { value: 'avez eu', isIrregular: true },
-        elles: { value: 'ont eu', isIrregular: true },
       },
     },
     subjonctif: {

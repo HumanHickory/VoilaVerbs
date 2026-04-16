@@ -6,6 +6,7 @@ export const prendre: Verb = {
   isReflexive: false,
   usesAvoirAuxiliaryInPasseCompose: true,
   group: 'irregular',
+  pastParticiple: 'pris',
   tenses: {
     present: {
       isFullyIrregular: true,
@@ -41,17 +42,7 @@ export const prendre: Verb = {
         elles: { value: 'prendront', isIrregular: true },
       },
     },
-    passeCompose: {
-      baseRuleHint: 'present tense avoir + past participle (pris)',
-      conjugations: {
-        je: { value: 'ai pris', isIrregular: true },
-        tu: { value: 'as pris', isIrregular: true },
-        elle: { value: 'a pris', isIrregular: true },
-        nous: { value: 'avons pris', isIrregular: true },
-        vous: { value: 'avez pris', isIrregular: true },
-        elles: { value: 'ont pris', isIrregular: true },
-      },
-    },
+
     subjonctif: {
       baseRuleHint: 'use stem prenn- (singular) + e/es/e/ions/iez/ent; nous/vous use pren-',
       conjugations: {

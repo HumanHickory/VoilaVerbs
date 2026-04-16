@@ -6,6 +6,7 @@ export const venir: Verb = {
   isReflexive: false,
   usesAvoirAuxiliaryInPasseCompose: false,
   group: 'irregular',
+  pastParticiple: 'venu',
   tenses: {
     present: {
       isFullyIrregular: true,
@@ -41,17 +42,7 @@ export const venir: Verb = {
         elles: { value: 'viendront', isIrregular: true },
       },
     },
-    passeCompose: {
-      baseRuleHint: 'present tense être + past participle (venu)',
-      conjugations: {
-        je: { value: 'suis venu', isIrregular: true },
-        tu: { value: 'es venu', isIrregular: true },
-        elle: { value: 'est venue', isIrregular: true },
-        nous: { value: 'sommes venus', isIrregular: true },
-        vous: { value: 'êtes venus', isIrregular: true },
-        elles: { value: 'sont venues', isIrregular: true },
-      },
-    },
+
     subjonctif: {
       baseRuleHint: 'use stem vienn- + e/es/e/ions/iez/ent (note nous/vous use ven- stem)',
       isFullyIrregular: true,

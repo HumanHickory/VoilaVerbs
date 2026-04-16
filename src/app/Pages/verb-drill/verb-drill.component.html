@@ -5,7 +5,7 @@
     <div class="card-header bg-white border-bottom">
       <div class="d-flex justify-content-between align-items-center">
         <div>
-          <h3 class="mb-0 fw-semibold">Conjugation Drill</h3>
+          <h3 class="mb-0 fw-semibold">Voila Verbs</h3>
           <small class="text-muted">Enter the correct conjugation</small>
         </div>
 
@@ -74,6 +74,10 @@
           <button type="button" (click)="setShowAnswer(true)" class="btn btn-outline-secondary">
             Show Answer
           </button>
+
+          <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#learnModal">
+            Learn
+          </button>
         </div>
       </form>
 
@@ -104,6 +108,39 @@
         </div>
       </div>
       }
+
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="learnModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">{{displayTense}}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        @let tenseData = tenseDescription();
+
+        <p>{{tenseData.description }}</p>
+        <p><b>Conjugation</b></p>
+        @for (item of tenseData.howToConjugate | keyvalue; track item.key) {
+        <div>
+          <strong>{{ item.key }}</strong>: {{ item.value }}
+        </div>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
 
     </div>
   </div>

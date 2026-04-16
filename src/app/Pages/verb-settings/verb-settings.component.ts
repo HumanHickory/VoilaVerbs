@@ -22,7 +22,14 @@ import type { Pronoun } from '../../Enums/pronoun.enum';
 })
 export class VerbSettingsComponent {
   // choices (hard-coded lists matching project enums)
-  readonly allTenses: Tense[] = ['present', 'imparfait', 'future', 'passeCompose', 'subjonctif'];
+  readonly allTenses: Tense[] = [
+    'present',
+    'imparfait',
+    'future',
+    'passeCompose',
+    'subjonctif',
+    'plusQueParfait',
+  ];
   readonly allSubjects: Pronoun[] = ['je', 'tu', 'elle', 'nous', 'vous', 'elles'];
   readonly allGroups = ['er', 'ir', 're', 'irregular'];
   readonly allAux = ['avoir', 'etre'];

@@ -6,6 +6,8 @@ export const finir: Verb = {
   isReflexive: false,
   usesAvoirAuxiliaryInPasseCompose: true,
   group: 'ir',
+  pastParticiple: 'fini',
+
   tenses: {
     present: {
       baseRuleHint: 'use stem fin- + is/is/it/issons/issez/issent',
@@ -40,17 +42,7 @@ export const finir: Verb = {
         elles: { value: 'finiront' },
       },
     },
-    passeCompose: {
-      baseRuleHint: 'present tense avoir + fini',
-      conjugations: {
-        je: { value: 'ai fini' },
-        tu: { value: 'as fini' },
-        elle: { value: 'a fini' },
-        nous: { value: 'avons fini' },
-        vous: { value: 'avez fini' },
-        elles: { value: 'ont fini' },
-      },
-    },
+
     subjonctif: {
       baseRuleHint: 'use stem finiss- + e/es/e/ions/iez/ent',
       conjugations: {

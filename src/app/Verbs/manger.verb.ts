@@ -6,6 +6,8 @@ export const manger: Verb = {
   isReflexive: false,
   usesAvoirAuxiliaryInPasseCompose: true,
   group: 'er',
+  pastParticiple: 'mangé',
+
   tenses: {
     present: {
       baseRuleHint: 'use stem mang- + e/es/e/eons/ez/ent',
@@ -40,17 +42,7 @@ export const manger: Verb = {
         elles: { value: 'mangeront' },
       },
     },
-    passeCompose: {
-      baseRuleHint: 'present tense avoir + past participle (mangé)',
-      conjugations: {
-        je: { value: 'ai mangé' },
-        tu: { value: 'as mangé' },
-        elle: { value: 'a mangé' },
-        nous: { value: 'avons mangé' },
-        vous: { value: 'avez mangé' },
-        elles: { value: 'ont mangé' },
-      },
-    },
+
     subjonctif: {
       baseRuleHint: 'use stem mang- + e/es/e/ions/iez/ent',
       conjugations: {

@@ -6,6 +6,7 @@ export const reflechir: Verb = {
   isReflexive: false,
   usesAvoirAuxiliaryInPasseCompose: true,
   group: 'ir',
+  pastParticiple: 'réfléchi',
   tenses: {
     present: {
       baseRuleHint: 'use stem réfléch- + is/is/it/issons/issez/issent',
@@ -40,17 +41,7 @@ export const reflechir: Verb = {
         elles: { value: 'réfléchiront' },
       },
     },
-    passeCompose: {
-      baseRuleHint: 'present tense avoir + past participle (réfléchi)',
-      conjugations: {
-        je: { value: 'ai réfléchi' },
-        tu: { value: 'as réfléchi' },
-        elle: { value: 'a réfléchi' },
-        nous: { value: 'avons réfléchi' },
-        vous: { value: 'avez réfléchi' },
-        elles: { value: 'ont réfléchi' },
-      },
-    },
+
     subjonctif: {
       baseRuleHint: 'use stem réfléchiss- + e/es/e/ions/iez/ent',
       conjugations: {

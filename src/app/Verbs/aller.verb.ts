@@ -6,7 +6,7 @@ export const aller: Verb = {
   group: 'irregular',
   isReflexive: false,
   usesAvoirAuxiliaryInPasseCompose: false,
-
+  pastParticiple: 'allé',
   tenses: {
     present: {
       isFullyIrregular: true,
@@ -45,20 +45,6 @@ export const aller: Verb = {
         elles: { value: 'iront', isIrregular: true },
       },
     },
-
-    passeCompose: {
-      baseRuleHint: 'present tense etre + past participle (allé)',
-      isFullyIrregular: true,
-      conjugations: {
-        je: { value: 'suis allée', isIrregular: true },
-        tu: { value: 'es allée', isIrregular: true },
-        elle: { value: 'est allée', isIrregular: true },
-        nous: { value: 'sommes allées', isIrregular: true },
-        vous: { value: 'êtes allées', isIrregular: true },
-        elles: { value: 'sont allées', isIrregular: true },
-      },
-    },
-
     subjonctif: {
       baseRuleHint: 'use stem aill- + e/es/e/ions/iez/ent',
       isFullyIrregular: true,

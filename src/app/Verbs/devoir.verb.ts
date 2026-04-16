@@ -6,6 +6,8 @@ export const devoir: Verb = {
   isReflexive: false,
   usesAvoirAuxiliaryInPasseCompose: true,
   group: 'irregular',
+  pastParticiple: 'dû',
+
   tenses: {
     present: {
       isFullyIrregular: true,
@@ -41,19 +43,8 @@ export const devoir: Verb = {
         elles: { value: 'devront', isIrregular: true },
       },
     },
-    passeCompose: {
-      baseRuleHint: 'present tense avoir + past participle (dû)',
-      conjugations: {
-        je: { value: 'ai dû', isIrregular: true },
-        tu: { value: 'as dû', isIrregular: true },
-        elle: { value: 'a dû', isIrregular: true },
-        nous: { value: 'avons dû', isIrregular: true },
-        vous: { value: 'avez dû', isIrregular: true },
-        elles: { value: 'ont dû', isIrregular: true },
-      },
-    },
     subjonctif: {
-      baseRuleHint: 'use doiv- + e/es/e/ions/iez/ent',
+      baseRuleHint: 'use stem doiv- + e/es/e/ions/iez/ent. note: use dev- in nous and vous forms',
       isFullyIrregular: true,
       conjugations: {
         je: { value: 'doive', isIrregular: true },

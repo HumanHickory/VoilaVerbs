@@ -6,6 +6,7 @@ export const parler: Verb = {
   group: 'er',
   isReflexive: false,
   usesAvoirAuxiliaryInPasseCompose: true,
+  pastParticiple: 'parlé',
 
   tenses: {
     present: {
@@ -44,20 +45,8 @@ export const parler: Verb = {
       },
     },
 
-    passeCompose: {
-      baseRuleHint: 'present tense avoir + past participle (parlé)',
-      conjugations: {
-        je: { value: 'ai parlé' },
-        tu: { value: 'as parlé' },
-        elle: { value: 'a parlé' },
-        nous: { value: 'avons parlé' },
-        vous: { value: 'avez parlé' },
-        elles: { value: 'ont parlé' },
-      },
-    },
-
     subjonctif: {
-      baseRuleHint: 'use stem (parl-) + e/es/e/ions/iez/ent',
+      baseRuleHint: 'use stem parl- + e/es/e/ions/iez/ent',
       conjugations: {
         je: { value: 'parle' },
         tu: { value: 'parles' },
