@@ -352,6 +352,10 @@ export class VerbDrillComponent implements OnInit {
     return this.verbDrillService.toNegativeForm(possibleAnswer);
   }
 
+  get showOnScreenAccents(): boolean {
+    return this.settings.showOnScreenAccents;
+  }
+
   protected insertAccent(char: string): void {
     const input = this.answerInput.nativeElement;
     const start = input.selectionStart ?? this.userAnswer.length;

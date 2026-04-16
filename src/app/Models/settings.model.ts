@@ -19,6 +19,7 @@ export interface VerbSettings {
   alwaysShowHints: boolean;
   requireAccents: boolean;
   resetAnswersOnMismatch: boolean;
+  showOnScreenAccents: boolean;
 }
 
 export const SETTINGS_KEY = 'vv-settings';
@@ -36,4 +37,5 @@ export const DEFAULT_SETTINGS: VerbSettings = {
   alwaysShowHints: false,
   requireAccents: false,
   resetAnswersOnMismatch: true,
+  showOnScreenAccents: true,
 };

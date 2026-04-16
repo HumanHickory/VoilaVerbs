@@ -51,6 +51,7 @@
             class="form-control" autocomplete="off" />
         </div>
 
+        @if(showOnScreenAccents){
         <div class="d-flex flex-wrap gap-2 mb-3">
           @for (char of accentCharacters; track char) {
           <button type="button" class="btn btn-sm btn-outline-secondary" (click)="insertAccent(char)">
@@ -58,6 +59,7 @@
           </button>
           }
         </div>
+        }
 
 
         <div class="d-flex gap-2">
