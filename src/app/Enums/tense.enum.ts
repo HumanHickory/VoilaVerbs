@@ -4,7 +4,8 @@ export type Tense =
   | 'future'
   | 'passeCompose'
   | 'subjonctif'
-  | 'plusQueParfait';
+  | 'plusQueParfait'
+  | 'conditional';
 
 export const TENSE_LABELS: Record<Tense, string> = {
   present: 'Present',
@@ -13,4 +14,5 @@ export const TENSE_LABELS: Record<Tense, string> = {
   passeCompose: 'Passé Composé',
   subjonctif: 'Subjonctif',
   plusQueParfait: 'Plus-Que-Parfait',
+  conditional: 'Conditional',
 };

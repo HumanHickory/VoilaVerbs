@@ -18,12 +18,12 @@ export class TenseService {
       description: 'The present tense is used to describe actions happening now or general truths.',
 
       howToConjugate: {
-        je: 'Remove ending + e / is / irregular',
-        tu: 'Remove ending + es / is / irregular',
-        elle: 'Remove ending + e / it / irregular',
-        nous: 'Remove ending + ons / issons / irregular',
-        vous: 'Remove ending + ez / issez / irregular',
-        elles: 'Remove ending + ent / issent / irregular',
+        je: 'Remove ending + e (-er) / is (-r) / s (-re)',
+        tu: 'Remove ending + es (-er) / is (-r) / s (-re)',
+        elle: 'Remove ending + e (-er) / it (-r) / n/a (-re)',
+        nous: 'Remove ending + ons (-er) / issons (-r) / ons (-re)',
+        vous: 'Remove ending + ez (-er) / issez (-r) / ez (-re)',
+        elles: 'Remove ending + ent (-er) / issent (-r) / ent (-re)',
       },
 
       exampleSentences: [

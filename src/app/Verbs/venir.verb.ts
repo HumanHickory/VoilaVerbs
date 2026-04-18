@@ -55,5 +55,16 @@ export const venir: Verb = {
         elles: { value: 'viennent', isIrregular: true },
       },
     },
+    conditional: {
+      baseRuleHint: 'use stem viendr- + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'viendrais' },
+        tu: { value: 'viendrais' },
+        elle: { value: 'viendrait' },
+        nous: { value: 'viendrions' },
+        vous: { value: 'viendriez' },
+        elles: { value: 'viendraient' },
+      },
+    },
   },
 };

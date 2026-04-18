@@ -54,5 +54,16 @@ export const connaitre: Verb = {
         elles: { value: 'connaissent', isIrregular: true },
       },
     },
+    conditional: {
+      baseRuleHint: 'use stem connaîtr- + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'connaîtrais' },
+        tu: { value: 'connaîtrais' },
+        elle: { value: 'connaîtrait' },
+        nous: { value: 'connaîtrions' },
+        vous: { value: 'connaîtriez' },
+        elles: { value: 'connaîtraient' },
+      },
+    },
   },
 };

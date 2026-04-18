@@ -13,6 +13,8 @@ export interface VerbSettings {
   reflexiveFilter: ReflexiveFilter;
   auxiliaries: string[]; // 'avoir' | 'etre'
   negatives: NegativeFilters;
+  useSpecificVerbs: boolean;
+  specificVerbs: string[];
 
   // general UI settings
   showEnglish: boolean;
@@ -25,13 +27,23 @@ export interface VerbSettings {
 export const SETTINGS_KEY = 'vv-settings';
 
 export const DEFAULT_SETTINGS: VerbSettings = {
-  tenses: ['present', 'imparfait', 'future', 'passeCompose', 'subjonctif'],
+  tenses: [
+    'present',
+    'imparfait',
+    'future',
+    'passeCompose',
+    'plusQueParfait',
+    'subjonctif',
+    'conditional',
+  ],
   subjects: ['je', 'tu', 'elle', 'nous', 'vous', 'elles'],
   groups: ['er', 'ir', 're', 'irregular'],
   irregularFilter: 'all',
   reflexiveFilter: 'all',
   auxiliaries: ['avoir', 'etre'],
   negatives: 'all',
+  useSpecificVerbs: false,
+  specificVerbs: [],
 
   showEnglish: true,
   alwaysShowHints: false,

@@ -23,6 +23,8 @@ import { cuisiner } from './cusiner.verb';
 import { entrer } from './entrer.verb';
 import { partir } from './partir.verb';
 import { sAsseoir } from './asseoir.verb';
+import { vouloir } from './vouloir.verb';
+import { dire } from './dire.verb';
 
 export const verbs: Verb[] = [
   aller,
@@ -48,4 +50,10 @@ export const verbs: Verb[] = [
   entrer,
   partir,
   sAsseoir,
+  vouloir,
+  dire,
 ];
+
+export const verbInfinitives: string[] = verbs
+  .map((v) => v.infinitive)
+  .sort((a, b) => a.localeCompare(b));

@@ -10,12 +10,12 @@ import type { Verb } from '../../Models/verb';
 import type { Tense } from '../../Enums/tense.enum';
 import { TENSE_LABELS } from '../../Enums/tense.enum';
 import type { Pronoun } from '../../Enums/pronoun.enum';
-import { verbs } from '../../Verbs/VERBS.const';
 import { VerbDrillService } from '../../Services/verbDrill.service';
 import { PastParticipleService } from '../../Services/pastParticiple.service';
 import { UtilityService } from '../../Services/utility.service';
 import { TenseService } from '../../Services/tense.service';
 import { TenseDescription } from '../../Models/tense-description.model';
+import { verbInfinitives, verbs } from '../../Verbs/VERBS.const';
 
 type DrillTriple = {
   verb: Verb;
@@ -56,26 +56,6 @@ export class VerbDrillComponent implements OnInit {
 
   //TO DEPLOY: ng deploy --base-href=/VoilaVerbs/
 
-  accentCharacters = [
-    'à',
-    'â',
-    'æ',
-    'ç',
-    'é',
-    'è',
-    'ê',
-    'ë',
-    'î',
-    'ï',
-    'ô',
-    'œ',
-    'ù',
-    'û',
-    'ü',
-    "'",
-    '-',
-  ];
-
   constructor(
     private readonly router: Router,
     private readonly settingsSvc: SettingsService,
@@ -115,12 +95,18 @@ export class VerbDrillComponent implements OnInit {
     const pool: DrillTriple[] = [];
 
     for (const verb of this.verbs) {
-      if (
-        !this.verbDrillService.matchesGroup(verb) ||
-        !this.verbDrillService.matchesReflexiveFilter(verb) ||
-        !this.verbDrillService.matchesAuxiliaryFilter(verb)
-      ) {
-        continue;
+      if (this.settings.useSpecificVerbs) {
+        if (!this.settings.specificVerbs.includes(verb.infinitive)) {
+          continue;
+        }
+      } else {
+        if (
+          !this.verbDrillService.matchesGroup(verb) ||
+          !this.verbDrillService.matchesReflexiveFilter(verb) ||
+          !this.verbDrillService.matchesAuxiliaryFilter(verb)
+        ) {
+          continue;
+        }
       }
 
       const availableTenses = Object.keys(verb.tenses) as Tense[];
@@ -287,6 +273,10 @@ export class VerbDrillComponent implements OnInit {
     }
 
     return 'No hints available.';
+  }
+
+  get accentCharacters(): string[] {
+    return this.utilityService.accentCharacters;
   }
 
   //used for show answer button

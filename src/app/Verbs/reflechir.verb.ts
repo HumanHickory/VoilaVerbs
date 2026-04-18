@@ -53,5 +53,16 @@ export const reflechir: Verb = {
         elles: { value: 'réfléchissent' },
       },
     },
+    conditional: {
+      baseRuleHint: 'use infinitive + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'réfléchirais' },
+        tu: { value: 'réfléchirais' },
+        elle: { value: 'réfléchirait' },
+        nous: { value: 'réfléchirions' },
+        vous: { value: 'réfléchiriez' },
+        elles: { value: 'réfléchiraient' },
+      },
+    },
   },
 };

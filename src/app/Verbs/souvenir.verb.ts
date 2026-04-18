@@ -57,5 +57,16 @@ export const seSouvenir: Verb = {
         elles: { value: 'se souviennent', isIrregular: true },
       },
     },
+    conditional: {
+      baseRuleHint: 'use stem souviendr- + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'me souviendrais' },
+        tu: { value: 'te souviendrais' },
+        elle: { value: 'se souviendrait' },
+        nous: { value: 'nous souviendrions' },
+        vous: { value: 'vous souviendriez' },
+        elles: { value: 'se souviendraient' },
+      },
+    },
   },
 };

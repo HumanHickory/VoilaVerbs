@@ -53,5 +53,16 @@ export const reussir: Verb = {
         elles: { value: 'réussissent' },
       },
     },
+    conditional: {
+      baseRuleHint: 'use infinitive + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'réussirais' },
+        tu: { value: 'réussirais' },
+        elle: { value: 'réussirait' },
+        nous: { value: 'réussirions' },
+        vous: { value: 'réussiriez' },
+        elles: { value: 'réussiraient' },
+      },
+    },
   },
 };

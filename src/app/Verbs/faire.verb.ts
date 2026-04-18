@@ -57,5 +57,16 @@ export const faire: Verb = {
         elles: { value: 'fassent', isIrregular: true },
       },
     },
+    conditional: {
+      baseRuleHint: 'use stem fer- + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'ferais' },
+        tu: { value: 'ferais' },
+        elle: { value: 'ferait' },
+        nous: { value: 'ferions' },
+        vous: { value: 'feriez' },
+        elles: { value: 'feraient' },
+      },
+    },
   },
 };

@@ -56,5 +56,16 @@ export const avoir: Verb = {
         elles: { value: 'aient', isIrregular: true },
       },
     },
+    conditional: {
+      baseRuleHint: 'use stem aur- + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'aurais' },
+        tu: { value: 'aurais' },
+        elle: { value: 'aurait' },
+        nous: { value: 'aurions' },
+        vous: { value: 'auriez' },
+        elles: { value: 'auraient' },
+      },
+    },
   },
 };

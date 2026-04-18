@@ -12,6 +12,7 @@ import {
 } from '../../Models/settings.model';
 import { TENSE_LABELS, type Tense } from '../../Enums/tense.enum';
 import type { Pronoun } from '../../Enums/pronoun.enum';
+import { verbInfinitives } from '../../Verbs/VERBS.const';
 
 @Component({
   selector: 'verb-settings',
@@ -29,6 +30,7 @@ export class VerbSettingsComponent {
     'passeCompose',
     'subjonctif',
     'plusQueParfait',
+    'conditional',
   ];
   readonly allSubjects: Pronoun[] = ['je', 'tu', 'elle', 'nous', 'vous', 'elles'];
   readonly allGroups = ['er', 'ir', 're', 'irregular'];
@@ -36,6 +38,7 @@ export class VerbSettingsComponent {
   readonly irregularOptions = ['all', 'regular', 'irregular'];
   readonly reflexiveOptions = ['all', 'reflexiveOnly', 'excludeReflexive'];
   readonly negativeOptions = ['all', 'positiveOnly', 'negativeOnly'];
+  readonly allSpecificVerbs = verbInfinitives;
 
   settings: VerbSettings;
   errorMessage = '';
@@ -75,9 +78,18 @@ export class VerbSettingsComponent {
     const missing: string[] = [];
     if (!this.settings.tenses || this.settings.tenses.length === 0) missing.push('tense');
     if (!this.settings.subjects || this.settings.subjects.length === 0) missing.push('subject');
-    if (!this.settings.groups || this.settings.groups.length === 0) missing.push('verb group');
-    if (!this.settings.auxiliaries || this.settings.auxiliaries.length === 0)
-      missing.push('auxiliary selection');
+
+    if (this.settings.useSpecificVerbs) {
+      if (!this.settings.specificVerbs || this.settings.specificVerbs.length === 0) {
+        missing.push('specific verb');
+      }
+    } else {
+      if (!this.settings.groups || this.settings.groups.length === 0) missing.push('verb group');
+      if (!this.settings.auxiliaries || this.settings.auxiliaries.length === 0) {
+        missing.push('auxiliary selection');
+      }
+    }
+
     return missing;
   }
 

@@ -53,5 +53,16 @@ export const voir: Verb = {
         elles: { value: 'voient', isIrregular: true },
       },
     },
+    conditional: {
+      baseRuleHint: 'use stem verr- + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'verrais' },
+        tu: { value: 'verrais' },
+        elle: { value: 'verrait' },
+        nous: { value: 'verrions' },
+        vous: { value: 'verriez' },
+        elles: { value: 'verraient' },
+      },
+    },
   },
 };

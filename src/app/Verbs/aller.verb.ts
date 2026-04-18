@@ -57,5 +57,16 @@ export const aller: Verb = {
         elles: { value: 'aillent', isIrregular: true },
       },
     },
+    conditional: {
+      baseRuleHint: 'use stem ir- + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'irais' },
+        tu: { value: 'irais' },
+        elle: { value: 'irait' },
+        nous: { value: 'irions' },
+        vous: { value: 'iriez' },
+        elles: { value: 'iraient' },
+      },
+    },
   },
 };

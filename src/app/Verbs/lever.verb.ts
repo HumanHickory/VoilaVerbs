@@ -56,5 +56,16 @@ export const seLever: Verb = {
         elles: { value: 'se lèvent', isIrregular: true },
       },
     },
+    conditional: {
+      baseRuleHint: 'use stem lèver- + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'me lèverais' },
+        tu: { value: 'te lèverais' },
+        elle: { value: 'se lèverait' },
+        nous: { value: 'nous lèverions' },
+        vous: { value: 'vous lèveriez' },
+        elles: { value: 'se lèveraient' },
+      },
+    },
   },
 };

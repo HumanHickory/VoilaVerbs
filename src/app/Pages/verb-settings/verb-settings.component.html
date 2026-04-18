@@ -40,7 +40,18 @@
                     }
                 </div>
             </section>
+            <section class="mb-3">
+                <h6>Verb Selection Mode</h6>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" id="useSpecificVerbs" type="checkbox"
+                        [(ngModel)]="settings.useSpecificVerbs" name="useSpecificVerbs" />
+                    <label class="form-check-label" for="useSpecificVerbs">
+                        Specific verbs only
+                    </label>
+                </div>
+            </section>
 
+            @if (!settings.useSpecificVerbs) {
             <section class="mb-3">
                 <h6>Verb groups</h6>
                 <div class="d-flex flex-wrap gap-2">
@@ -92,6 +103,22 @@
                     }
                 </div>
             </section>
+            }
+
+            @if (settings.useSpecificVerbs) {
+            <section class="mb-3">
+                <h6>Specific Verbs</h6>
+                <div class="d-flex flex-wrap gap-2">
+                    @for (v of allSpecificVerbs; track v) {
+                    <label class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" [checked]="isIn(settings.specificVerbs, v)"
+                            (change)="toggleArray(settings.specificVerbs, v)" />
+                        <span class="form-check-label">{{ v | titlecase}}</span>
+                    </label>
+                    }
+                </div>
+            </section>
+            }
 
             <section class="mb-3">
                 <h6>Negatives</h6>

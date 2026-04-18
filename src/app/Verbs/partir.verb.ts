@@ -57,5 +57,16 @@ export const partir: Verb = {
         elles: { value: 'partent', isIrregular: true },
       },
     },
+    conditional: {
+      baseRuleHint: 'use infinitive + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'partirais' },
+        tu: { value: 'partirais' },
+        elle: { value: 'partirait' },
+        nous: { value: 'partirions' },
+        vous: { value: 'partiriez' },
+        elles: { value: 'partiraient' },
+      },
+    },
   },
 };

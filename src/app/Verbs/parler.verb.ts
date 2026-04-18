@@ -56,5 +56,17 @@ export const parler: Verb = {
         elles: { value: 'parlent' },
       },
     },
+
+    conditional: {
+      baseRuleHint: 'use infinitive + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'parlerais' },
+        tu: { value: 'parlerais' },
+        elle: { value: 'parlerait' },
+        nous: { value: 'parlerions' },
+        vous: { value: 'parleriez' },
+        elles: { value: 'parleraient' },
+      },
+    },
   },
 };

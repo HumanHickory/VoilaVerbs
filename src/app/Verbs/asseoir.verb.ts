@@ -58,5 +58,16 @@ export const sAsseoir: Verb = {
         elles: { value: "s'asseyent", isIrregular: true },
       },
     },
+    conditional: {
+      baseRuleHint: 'use stem assiér- + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: "m'assiérais" },
+        tu: { value: "t'assiérais" },
+        elle: { value: "s'assiérait" },
+        nous: { value: 'nous assiérions' },
+        vous: { value: 'vous assiériez' },
+        elles: { value: "s'assiéraient" },
+      },
+    },
   },
 };

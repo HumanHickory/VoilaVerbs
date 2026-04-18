@@ -54,5 +54,16 @@ export const prendre: Verb = {
         elles: { value: 'prennent', isIrregular: true },
       },
     },
+    conditional: {
+      baseRuleHint: 'use stem prendr- + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'prendrais' },
+        tu: { value: 'prendrais' },
+        elle: { value: 'prendrait' },
+        nous: { value: 'prendrions' },
+        vous: { value: 'prendriez' },
+        elles: { value: 'prendraient' },
+      },
+    },
   },
 };

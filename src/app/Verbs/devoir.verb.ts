@@ -55,5 +55,16 @@ export const devoir: Verb = {
         elles: { value: 'doivent', isIrregular: true },
       },
     },
+    conditional: {
+      baseRuleHint: 'use stem devr- + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'devrais' },
+        tu: { value: 'devrais' },
+        elle: { value: 'devrait' },
+        nous: { value: 'devrions' },
+        vous: { value: 'devriez' },
+        elles: { value: 'devraient' },
+      },
+    },
   },
 };

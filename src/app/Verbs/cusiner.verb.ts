@@ -55,5 +55,16 @@ export const cuisiner: Verb = {
         elles: { value: 'cuisinent' },
       },
     },
+    conditional: {
+      baseRuleHint: 'use infinitive + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'cuisinerais' },
+        tu: { value: 'cuisinerais' },
+        elle: { value: 'cuisinerait' },
+        nous: { value: 'cuisinerions' },
+        vous: { value: 'cuisineriez' },
+        elles: { value: 'cuisineraient' },
+      },
+    },
   },
 };

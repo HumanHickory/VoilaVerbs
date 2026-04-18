@@ -53,5 +53,16 @@ export const seReunir: Verb = {
         elles: { value: 'se réunissent' },
       },
     },
+    conditional: {
+      baseRuleHint: 'use infinitive + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'me réunirais' },
+        tu: { value: 'te réunirais' },
+        elle: { value: 'se réunirait' },
+        nous: { value: 'nous réunirions' },
+        vous: { value: 'vous réuniriez' },
+        elles: { value: 'se réuniraient' },
+      },
+    },
   },
 };

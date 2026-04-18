@@ -74,10 +74,10 @@
           <button type="button" (click)="setShowAnswer(true)" class="btn btn-outline-secondary">
             Show Answer
           </button>
-
+          <!-- 
           <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#learnModal">
             Learn
-          </button>
+          </button> -->
         </div>
       </form>
 
@@ -128,10 +128,17 @@
         @let tenseData = tenseDescription();
 
         <p>{{tenseData.description }}</p>
-        <p><b>Conjugation</b></p>
+        <div><b>Conjugations</b></div>
         @for (item of tenseData.howToConjugate | keyvalue; track item.key) {
         <div>
           <strong>{{ item.key }}</strong>: {{ item.value }}
+        </div>
+        }
+
+        <div class="mt-2"><b>Examples</b></div>
+        @for (item of tenseData.exampleSentences; track item) {
+        <div>
+          {{ item }}
         </div>
         }
       </div>

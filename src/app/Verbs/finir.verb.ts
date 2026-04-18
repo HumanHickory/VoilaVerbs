@@ -54,5 +54,16 @@ export const finir: Verb = {
         elles: { value: 'finissent' },
       },
     },
+    conditional: {
+      baseRuleHint: 'use infinitive + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'finirais' },
+        tu: { value: 'finirais' },
+        elle: { value: 'finirait' },
+        nous: { value: 'finirions' },
+        vous: { value: 'finiriez' },
+        elles: { value: 'finiraient' },
+      },
+    },
   },
 };

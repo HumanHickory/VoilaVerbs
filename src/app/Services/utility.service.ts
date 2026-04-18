@@ -6,6 +6,26 @@ import { Tense } from '../Enums/tense.enum';
 export class UtilityService {
   readonly compoundTenses: Tense[] = ['passeCompose'];
 
+  accentCharacters = [
+    'à',
+    'â',
+    'æ',
+    'ç',
+    'é',
+    'è',
+    'ê',
+    'ë',
+    'î',
+    'ï',
+    'ô',
+    'œ',
+    'ù',
+    'û',
+    'ü',
+    "'",
+    '-',
+  ];
+
   randomFrom<T>(items: T[]): T {
     return items[Math.floor(Math.random() * items.length)];
   }

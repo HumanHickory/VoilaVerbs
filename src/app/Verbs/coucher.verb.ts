@@ -53,5 +53,16 @@ export const seCoucher: Verb = {
         elles: { value: 'se couchent' },
       },
     },
+    conditional: {
+      baseRuleHint: 'use infinitive + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'me coucherais' },
+        tu: { value: 'te coucherais' },
+        elle: { value: 'se coucherait' },
+        nous: { value: 'nous coucherions' },
+        vous: { value: 'vous coucheriez' },
+        elles: { value: 'se coucheraient' },
+      },
+    },
   },
 };

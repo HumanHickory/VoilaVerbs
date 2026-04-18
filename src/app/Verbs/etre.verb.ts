@@ -61,5 +61,16 @@ export const etre: Verb = {
         elles: { value: 'soient', isIrregular: true },
       },
     },
+    conditional: {
+      baseRuleHint: 'use stem ser- + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'serais' },
+        tu: { value: 'serais' },
+        elle: { value: 'serait' },
+        nous: { value: 'serions' },
+        vous: { value: 'seriez' },
+        elles: { value: 'seraient' },
+      },
+    },
   },
 };

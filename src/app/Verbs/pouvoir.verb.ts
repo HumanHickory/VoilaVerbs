@@ -55,5 +55,16 @@ export const pouvoir: Verb = {
         elles: { value: 'puissent', isIrregular: true },
       },
     },
+    conditional: {
+      baseRuleHint: 'use stem pourr- + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'pourrais' },
+        tu: { value: 'pourrais' },
+        elle: { value: 'pourrait' },
+        nous: { value: 'pourrions' },
+        vous: { value: 'pourriez' },
+        elles: { value: 'pourraient' },
+      },
+    },
   },
 };

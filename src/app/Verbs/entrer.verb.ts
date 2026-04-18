@@ -55,5 +55,16 @@ export const entrer: Verb = {
         elles: { value: 'entrent' },
       },
     },
+    conditional: {
+      baseRuleHint: 'use infinitive + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'entrerais' },
+        tu: { value: 'entrerais' },
+        elle: { value: 'entrerait' },
+        nous: { value: 'entrerions' },
+        vous: { value: 'entreriez' },
+        elles: { value: 'entreraient' },
+      },
+    },
   },
 };

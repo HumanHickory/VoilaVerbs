@@ -54,5 +54,16 @@ export const manger: Verb = {
         elles: { value: 'mangent' },
       },
     },
+    conditional: {
+      baseRuleHint: 'use infinitive + ais/ais/ait/ions/iez/aient',
+      conjugations: {
+        je: { value: 'mangerais' },
+        tu: { value: 'mangerais' },
+        elle: { value: 'mangerait' },
+        nous: { value: 'mangerions' },
+        vous: { value: 'mangeriez' },
+        elles: { value: 'mangeraient' },
+      },
+    },
   },
 };
